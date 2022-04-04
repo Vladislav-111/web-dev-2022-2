@@ -5,3 +5,12 @@ body {
 .avatar {
     max-width: 100%;
 }
+
+.img-com{
+    width: 80px;
+    height: 80px;
+}
+
+.form-title{
+    background-color: lightgray;
+}
