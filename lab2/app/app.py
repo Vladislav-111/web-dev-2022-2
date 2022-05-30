@@ -4,7 +4,7 @@ app = Flask(__name__)
 application = app
 
 
-@app.route('/index')
+@app.route('/')
 def index():
     return render_template('index.html')
 
@@ -53,3 +53,39 @@ def calc():
     response = make_response(render_template('calc.html', result=result, error_msg=error_msg))
     return response
 
+@app.route('/tnum', methods=['GET', 'POST'])
+def tnum():
+    telephon = None
+    msg = None
+    msg_color = None
+    form_color = None
+    if request.method == 'POST':
+        telephon = request.form.get('telephon')
+        telephon = telephon.replace('+','')
+        telephon = telephon.replace(' ','')
+        telephon = telephon.replace('(','')
+        telephon = telephon.replace(')','')
+        telephon = telephon.replace('-','')
+        telephon = telephon.replace('.','')
+        try:
+            telephon = int(telephon)
+            telephon = str(telephon)
+            if len(telephon) not in range(10,12):
+                msg = 'Недопустимый ввод. Неверное количество цифр.'
+                msg_color = 'invalid-feedback'
+                form_color = 'is-invalid'
+            else:
+                msg = 'Номер телефона верный!'
+                msg_color = 'valid-feedback'
+                form_color = 'is-valid'
+        except ValueError:
+            if not telephon:
+                msg = 'Введите номер телефона.'
+                msg_color = 'invalid-feedback'
+                form_color = 'is-invalid'
+            else:
+                msg = 'Недопустимый ввод. В номере телефона встречаются недопустимые символы.'
+                msg_color = 'invalid-feedback'
+                form_color = 'is-invalid'
+    
+    return render_template('tnum.html', msg=msg, msg_color=msg_color, form_color=form_color)
