@@ -22,7 +22,7 @@ def cookies():
     if request.cookies.get('name') is None:
         response.set_cookie('name', 'qq')
     else:
-         response.set_cookie('name', 'qq', expires=0)
+        response.set_cookie('name', 'qq', expires=0)
     return response
 
 @app.route('/form', methods=['GET', 'POST'])
@@ -69,8 +69,7 @@ def tnum():
         telephon = telephon.replace('.','')
         try:
             telephon = int(telephon)
-            telephon = str(telephon)
-            if len(telephon) not in range(10,12):
+            if len(str(telephon)) not in range(10,12):
                 msg = 'Недопустимый ввод. Неверное количество цифр.'
                 msg_color = 'invalid-feedback'
                 form_color = 'is-invalid'
