@@ -67,6 +67,7 @@ def tnum():
         telephon = telephon.replace(')','')
         telephon = telephon.replace('-','')
         telephon = telephon.replace('.','')
+        tel = telephon
         try:
             telephon = int(telephon)
             if len(str(telephon)) not in range(10,12):
@@ -74,9 +75,11 @@ def tnum():
                 msg_color = 'invalid-feedback'
                 form_color = 'is-invalid'
             else:
-                msg = 'Номер телефона верный!'
+                telephon = f'8-{tel[-10]}{tel[-9]}{tel[-8]}-{tel[-7]}{tel[-6]}{tel[-5]}-{tel[-4]}{tel[-3]}-{tel[-2]}{tel[-1]}'
+                msg = 'Номер телефона {} верный!'.format(telephon)
                 msg_color = 'valid-feedback'
-                form_color = 'is-valid'
+                form_color = 'is-valid'                
+                return render_template('tnum.html', msg=msg, msg_color=msg_color, form_color=form_color)
         except ValueError:
             if not telephon:
                 msg = 'Введите номер телефона.'
