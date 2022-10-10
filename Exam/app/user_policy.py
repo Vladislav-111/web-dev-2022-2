@@ -1,9 +1,6 @@
 from flask_login import current_user
 from app import app
 
-
-ID_MODERATOR_ROLE = 2
-
 def is_admin():
     return current_user.role_id == app.config.get('ADMIN_ROLE_ID')
 
