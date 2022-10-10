@@ -23,10 +23,10 @@ migrate = Migrate(app, db)
 from models import Category, Image
 
 from auth import bp as auth_bp, init_login_manager
-#from courses import bp as couses_bp
+from books import bp as books_bp
 
 app.register_blueprint(auth_bp)
-#app.register_blueprint(couses_bp)
+app.register_blueprint(books_bp)
 
 init_login_manager(app)
 

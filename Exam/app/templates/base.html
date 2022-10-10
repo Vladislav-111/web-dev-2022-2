@@ -24,12 +24,12 @@
                 </div>
                 {% if current_user.is_authenticated %}
                     <div class="text-light d-flex ms-auto px-3 fs-5">
-                        {% if current_user.role == 2 %}
+                        {% if current_user.role_id == 2 %}
                         &#9734;{{ current_user.full_name }}&#9734;
-                            <div class="ms-3">{{ current_user.roles.name }}</div>
-                        {% elif current_user.role == 3 %}
+                            <div class="ms-3">{{ current_user.role.name }}</div>
+                        {% elif current_user.role_id == 3 %}
                         &#9733;{{ current_user.full_name }}&#9733;
-                            <div class="ms-3">{{ current_user.roles.name }}</div>
+                            <div class="ms-3">{{ current_user.role.name }}</div>
                         {% else %}
                             {{ current_user.full_name }}
                         {% endif %}

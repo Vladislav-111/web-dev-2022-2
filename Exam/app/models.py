@@ -1,9 +1,10 @@
-import os
 from flask import url_for
-import sqlalchemy as sa
 from app import db
-from werkzeug.security import check_password_hash, generate_password_hash
+import sqlalchemy as sa
 from flask_login import UserMixin
+from werkzeug.security import check_password_hash, generate_password_hash
+import os
+from user_policy import UsersPolicy
 
 class Category(db.Model):
     __tablename__ = 'categories'
@@ -15,16 +16,6 @@ class Category(db.Model):
     def __repr__(self):
         return '<Category %r>' % self.name
 
-class Role(db.Model):
-    __tablename__ = 'roles'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True, nullable=False)
-    description = db.Column(db.Text, nullable=False)
-
-    def __repr__(self):
-        return '<Roles %r>' % self.name
-
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
@@ -33,44 +24,58 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(200), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     first_name = db.Column(db.String(100), nullable=False)
-    middle_name = db.Column(db.String(100))
-    role = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    created_at = db.Column(db.DateTime, nullable=False, server_default=sa.sql.func.now())
+    middle_name = db.Column(db.String(100), nullable=True) 
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     
-    roles = db.relationship('Role')
-
-    def __repr__(self):
-        return '<User %r>' % self.login
+    role = db.relationship('Role')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
-    
+
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
+    
     @property
     def full_name(self):
         return ' '.join([self.last_name, self.first_name, self.middle_name or ''])
 
-class Books(db.Model):
+    def can(self, action, role_id):
+        users_policy = UsersPolicy(role_id)
+        method = getattr(users_policy, action, role_id)
+        if method is not None:
+            return method()
+        return False
+
+    def __repr__(self):
+        return '<User %r>' % self.login
+
+class Role(db.Model):
+    __tablename__ = 'roles'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text())
+
+    def __repr__(self):
+        return '<Role %r>' % self.name
+
+class Book(db.Model):
     __tablename__ = 'books'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     short_desc = db.Column(db.Text, nullable=False)
-    year = db.Column(db.DateTime, nullable=False, server_default=sa.sql.func.now())
-    publishing_house = db.Column(db.String(100), nullable=False)
-    author = db.Column(db.String(100), nullable=False)
-    size = db.Column(db.Integer, nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    created_at = db.Column(db.DateTime, nullable=False, server_default=sa.sql.func.now())
+    background_image_id = db.Column(db.Integer, db.ForeignKey('images.id'))
 
-    def __repr__(self):
-        return '<Books %r>' % self.name
+    author = db.relationship('User')
+    category = db.relationship('Category', lazy=False)
+    bg_image = db.relationship('Image')
 
-    @property
-    def rating(self):
-        if self.rating_num > 0:
-            return self.rating_sum/self.rating_num
-        return 0
+    def __repr__(self): 
+        return '<Book %r>' % self.name
 
 class Image(db.Model):
     __tablename__ = 'images'
@@ -79,9 +84,10 @@ class Image(db.Model):
     file_name = db.Column(db.String(100), nullable=False)
     mime_type = db.Column(db.String(100), nullable=False)
     md5_hash = db.Column(db.String(200), nullable=False, unique=True)
-    book_id = db.Column(db.Integer, db.ForeignKey('books.id'))
-
-    book = db.relationship('Books')
+    created_at = db.Column(db.DateTime, nullable=False, server_default=sa.sql.func.now())
+    object_type =  db.Column(db.String(100))
+    object_id =  db.Column(db.Integer)
+    active =  db.Column(db.Boolean, nullable=False, default=False)
 
     def __repr__(self):
         return '<Image %r>' % self.file_name
