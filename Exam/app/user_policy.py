@@ -1,6 +1,7 @@
 from flask_login import current_user
 from app import app
 
+
 def is_admin():
     return current_user.role_id == app.config.get('ADMIN_ROLE_ID')
 

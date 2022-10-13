@@ -46,10 +46,10 @@
             </div>
             <div class="mb-5">
                 {% if current_user.is_authenticated and current_user.can('update', role_id=role_id) %}
-                    <a class="btn btn-secondary" href='#'>Редактировать книгу</a>
+                    <a class="btn btn-secondary" href="{{ url_for('books.edit', book_id=book.id) }}">Редактировать книгу</a>
                 {% endif %}
                 {% if current_user.is_authenticated and current_user.can('delete', role_id=role_id) %}
-                    <button type="button" class="btn btn-danger" data-url="#" data-bs-toggle="modal" data-bs-target="#delete-user-modal">
+                    <button type="button" class="btn btn-danger" data-url="{{ url_for('books.delete', book_id=book.id) }}" data-bs-toggle="modal" data-bs-target="#delete-book">
                         Удалить книгу
                     </button>
                 {% endif %}
@@ -67,5 +67,27 @@
         </div>
     {% endif %}
 
+</div>
+
+<div class="modal fade" id="delete-book" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Удаление книги</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы действительно хотите удалить книгу? <span id="book-name">{{ books.name }}</span></p>
+                <form action="" method="POST">
+                    <input type="hidden" name="book_id" value="">
+                    <input id="delete-btn" type="submit" class="d-none">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <label class="btn btn-danger" for="delete-btn">Удалить</label>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Отменить</button>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -45,7 +45,7 @@ def check_rights(action):
         def wrapper(*args, **kwargs):
             if not current_user.can(action, current_user.role_id):
                 flash('У вас нет прав для доступа к данной странице.', 'danger')
-                return redirect(url_for('index'))
+                return redirect(url_for('books.index'))
             return func(*args, **kwargs)
         return wrapper
     return decorator

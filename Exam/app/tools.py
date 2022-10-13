@@ -49,3 +49,7 @@ class ImageSaver:
         self.md5_hash = hashlib.md5(self.file.read()).hexdigest()
         self.file.seek(0)
         return Image.query.filter(Image.md5_hash == self.md5_hash).first()
+
+    def delete_img(self, id):
+        self.img = Image.query.get(id)
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], self.img.storage_filename))

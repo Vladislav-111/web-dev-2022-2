@@ -1,0 +1,39 @@
+{% macro render_book_update(url, categories, book={}, users={}) %}
+    <div class="container">
+        <h2 class="mb-4 pt-5 text-center">Редактирование книги</h2>
+        <form method="POST" action="{{ url }}" enctype="multipart/form-data">
+            <div class="mb-3 row">
+                <div class="col-md-6 d-flex flex-column">
+                    <div class="mb-3">
+                        <label for="name">Название</label>
+                        <input class="form-control" type="text" name="name" id="name" value="{{ book.name or '' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="category">Жанр</label>
+                        <select class="form-select" name="category" id="category">
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="author">Автор</label>
+                        <select class="form-select" name="author" id="author" multiple>
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3 d-flex flex-column flex-grow-1">
+                        <label for="short_desc">Краткое описание</label>
+                        <textarea class="form-control flex-grow-1" name="short_desc" id="short_desc" cols="30" rows="5">{{ book.short_desc or '' }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3 text-center">
+                <input type="submit" class="btn btn-dark" value="Сохранить">
+            </div>
+        </form>
+    </div>
+{% endmacro %}

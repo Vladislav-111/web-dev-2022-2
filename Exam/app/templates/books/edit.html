@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% from 'books/update.html' import render_book_update %}
+
+{% block content %}
+    {{ render_book_update(url_for('books.update', book_id=book.id), categories, book=book, users=users) }}
+{% endblock %}
